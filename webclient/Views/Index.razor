@@ -1,0 +1,12 @@
+﻿@page "/"
+
+@inject TodoClient.Services.LoginService loginService
+
+@if (loginService.User != null)
+{
+    <Todo />
+}
+else
+{
+    <Login />
+}

@@ -1,0 +1,16 @@
+﻿@inject TodoClient.Services.LoginService loginService
+
+<form>
+    <div class="alert alert-danger @( loginService.LastError != null ? "d-block" : "d-none")" role="alert">
+        @loginService.LastError
+    </div>
+    <div>
+        <input type="text" name="email" placeholder="email address" />
+    </div>
+    <div>
+        <input type="password" name="password" placeholder="password" />
+    </div>
+    <div>
+        <input type="button" value="Login" @onclick="loginService.DoLoginAsync">
+    </div>
+</form>

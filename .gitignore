@@ -1,0 +1,4 @@
+tools
+.vs
+**/bin
+**/obj
