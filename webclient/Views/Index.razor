@@ -1,12 +1,29 @@
 ﻿@page "/"
 
-@inject TodoClient.Services.LoginService loginService
+@using TodoClient.Utils
 
-@if (loginService.User != null)
+@inject TodoClient.Services.LoginService loginService
+@inject IJSRuntime JSRuntime
+
+@if (isLoggedIn)
 {
     <Todo />
 }
 else
 {
     <Login />
+}
+
+@code {
+    public bool isLoggedIn = false;
+
+    protected override void OnInitialized()
+    {
+        loginService.OnLoginSuccess += new EventHandler((x, y) =>
+        {
+            JSRuntime.CustomLog("Event called!");
+            isLoggedIn = true;
+            StateHasChanged();
+        });
+    }
 }

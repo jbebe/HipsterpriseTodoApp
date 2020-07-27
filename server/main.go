@@ -2,32 +2,41 @@ package main
 
 import (
 	"net/http"
+	"os"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
 
 func main() {
 	router := gin.Default()
 
-	// This handler will match /user/john but will not match /user/ or /user
-	router.GET("/user/:name", func(c *gin.Context) {
-		name := c.Param("name")
-		c.String(http.StatusOK, "Hello %s", name)
+	config := cors.DefaultConfig()
+	config.AllowOrigins = []string{"http://127.0.0.1:8002", "http://localhost:8002"}
+	router.Use(cors.New(config))
+
+	router.GET("/login", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"email": "juhasz.balint.bebe@gmail.com"})
 	})
 
-	// However, this one will match /user/john/ and also /user/john/send
-	// If no other routers match /user/john, it will redirect to /user/john/
-	router.GET("/user/:name/*action", func(c *gin.Context) {
-		name := c.Param("name")
-		action := c.Param("action")
-		message := name + " is " + action
-		c.String(http.StatusOK, message)
+	router.GET("/todo", func(c *gin.Context) {
+		// create todo CRUD
+		// wrap redis - mongodb cache
+		c.JSON(http.StatusOK, gin.H{"email": "juhasz.balint.bebe@gmail.com"})
 	})
 
-	// For each matched request Context will hold the route definition
-	router.POST("/user/:name/*action", func(c *gin.Context) {
-
-	})
-
-	router.Run(":8001")
+	// go run $env:GOROOT/src/crypto/tls/generate_cert.go --host 127.0.0.1
+	if fileExists("cert.pem") && fileExists("key.pem") {
+		router.RunTLS(":8001", "cert.pem", "key.pem")
+	} else {
+		router.Run(":8001")
+	}
 }

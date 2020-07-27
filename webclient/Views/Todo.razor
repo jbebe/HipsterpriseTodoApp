@@ -1,3 +1,9 @@
-﻿<div>
-    This is the TODO app.
+﻿@inject TodoClient.Services.LoginService loginService
+
+<div>
+    This is the TODO app of @(loginService.User.Email)
 </div>
+
+@code {
+
+}
