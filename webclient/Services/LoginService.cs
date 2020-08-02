@@ -1,14 +1,9 @@
 ﻿using Microsoft.AspNetCore.Components;
 using System;
-using System.Net.Http;
-using System.Net.Http.Json;
 using System.Threading.Tasks;
 using TodoClient.Data;
-using Microsoft.Extensions.Logging;
 using Microsoft.JSInterop;
 using TodoClient.Utils;
-using System.Text.Json.Serialization;
-using System.Dynamic;
 
 namespace TodoClient.Services
 {
@@ -16,7 +11,7 @@ namespace TodoClient.Services
     {
         private NavigationManager Navigation { get; }
 
-        private HttpClient Http { get; }
+        private ApiClient ApiClient { get; }
         
         private Settings Settings { get; }
         public IJSRuntime JSRuntime { get; }
@@ -27,10 +22,10 @@ namespace TodoClient.Services
 
         public event EventHandler OnLoginSuccess;
 
-        public LoginService(NavigationManager navigation, HttpClient http, Settings settings, IJSRuntime JSRuntime)
+        public LoginService(NavigationManager navigation, ApiClient apiClient, Settings settings, IJSRuntime JSRuntime)
         {
             Navigation = navigation;
-            Http = http;
+            ApiClient = apiClient;
             Settings = settings;
             this.JSRuntime = JSRuntime;
             JSRuntime.CustomLog($"{nameof(LoginService)} ctor");
@@ -40,8 +35,7 @@ namespace TodoClient.Services
         {
             try
             {
-                User = await Http.GetFromJsonAsync<User>(
-                    new Uri($"{Settings.ApiUrl}/login", UriKind.Absolute));
+                User = await ApiClient.GetAsync<User>("login");
                 LastError = null;
                 JSRuntime.CustomLog($"User created, content: {System.Text.Json.JsonSerializer.Serialize(User)}");
                 OnLoginSuccess.Invoke(null, null);

@@ -21,7 +21,6 @@ else
     {
         loginService.OnLoginSuccess += new EventHandler((x, y) =>
         {
-            JSRuntime.CustomLog("Event called!");
             isLoggedIn = true;
             StateHasChanged();
         });

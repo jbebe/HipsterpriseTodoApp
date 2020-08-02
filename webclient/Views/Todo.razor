@@ -1,9 +1,38 @@
-﻿@inject TodoClient.Services.LoginService loginService
+﻿@using TodoClient.Services
+@using TodoClient.Entities
+
+@inject LoginService loginService
+@inject TodoStore todoStore 
 
 <div>
-    This is the TODO app of @(loginService.User.Email)
+    <textarea @bind="NewTodoContent" @bind:event="oninput" />
+    <button @onmousedown="CreateTodoAsync">Submit</button>
 </div>
+<ul>
+    @foreach (var todo in TodoItems)
+    {
+        <li>@(todo.Content)</li>
+    }
+</ul>
 
 @code {
+    private string NewTodoContent { get; set; } = "";
 
+    private IEnumerable<TodoItem> TodoItems = new TodoItem[] { };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateTodoItemsAsync();
+    }
+
+    private async Task UpdateTodoItemsAsync()
+    {
+        TodoItems = await todoStore.GetTodosAsync(loginService.User);
+    }
+
+    protected async Task CreateTodoAsync()
+    {
+        await todoStore.CreateTodoAsync(loginService.User, new TodoItem(loginService.User, NewTodoContent));
+        await UpdateTodoItemsAsync();
+    }
 }

@@ -1,4 +1,6 @@
-﻿namespace TodoClient.Data
+﻿using System;
+
+namespace TodoClient.Data
 {
     public class User
     {
